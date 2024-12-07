@@ -16,39 +16,10 @@ public class Main {
     public static void main(String[] args) throws IOException {
         var bufferedReader = new BufferedReader(new FileReader(INPUT_FILE_PATH.toFile()));
 
-        Predicate<List<Integer>> isGradualIncrease = (a) -> {
-            BiPredicate<Integer, Integer> compareTwo = (b,c) -> b >= c - MAX_DIFFERENCE && b <= c - MIN_DIFFERENCE;
 
-            for (var i = 0; i < a.size(); i++) {
-                if(i + 1 == a.size()){
-                    break;
-                }
-
-                if(!compareTwo.test(a.get(i), a.get(i+1))){
-                    return false;
-                }
-            }
-
-            return true;
-        };
-
-        Predicate<List<Integer>> isGradualDecrease = (a) -> {
-            BiPredicate<Integer, Integer> compareTwo = (b,c) -> c + MAX_DIFFERENCE >= b && c <= b - MIN_DIFFERENCE;
-
-            for (var i = 0; i < a.size(); i++) {
-                if(i + 1 == a.size()){
-                    break;
-                }
-
-                if(!compareTwo.test(a.get(i), a.get(i+1))){
-                    return false;
-                }
-            }
-
-            return true;
-        };
-
-        Predicate<List<Integer>> isSafe = (a) -> isGradualIncrease.test(a) || isGradualDecrease.test(a);
+        BiPredicate<Integer, Integer> gradualIncrease = (b,c) -> b >= c - MAX_DIFFERENCE && b <= c - MIN_DIFFERENCE;
+        BiPredicate<Integer, Integer> gradualDecrease = (b,c) -> c + MAX_DIFFERENCE >= b && c <= b - MIN_DIFFERENCE;
+        Predicate<List<Integer>> isSafe = (a) -> gradualChange(a, gradualDecrease) || gradualChange(a, gradualIncrease);
 
 
         var result = bufferedReader
@@ -66,6 +37,20 @@ public class Main {
                 }), Integer::sum);
 
         System.out.println("Result: " + result);
+    }
+
+    private static boolean gradualChange(List<Integer> listToTest, BiPredicate<Integer, Integer> changePredicate){
+        for (var i = 0; i < listToTest.size(); i++) {
+            if(i + 1 == listToTest.size()){
+                return true;
+            }
+
+            if(!changePredicate.test(listToTest.get(i), listToTest.get(i+1))){
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }
