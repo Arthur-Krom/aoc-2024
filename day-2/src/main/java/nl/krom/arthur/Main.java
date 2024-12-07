@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiPredicate;
@@ -40,12 +41,10 @@ public class Main {
     }
 
     private static boolean gradualChange(List<Integer> listToTest, BiPredicate<Integer, Integer> changePredicate){
-        for (var i = 0; i < listToTest.size(); i++) {
-            if(i + 1 == listToTest.size()){
-                return true;
-            }
+        var mutableList = new ArrayList<>(listToTest);
 
-            if(!changePredicate.test(listToTest.get(i), listToTest.get(i+1))){
+        for (var i = 1; i < mutableList.size(); i++) {
+            if(!changePredicate.test(mutableList.get(i-1), mutableList.get(i))){
                 return false;
             }
         }
